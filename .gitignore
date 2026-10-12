@@ -2,6 +2,8 @@
 Backend/venv/
 __pycache__/
 .env
+run_publish.sh
 data/
 *.pyc
 .pytest_cache/
+.run/
