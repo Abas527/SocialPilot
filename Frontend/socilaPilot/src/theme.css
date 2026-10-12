@@ -1,0 +1,666 @@
+/* ==========================================================================
+   SocialPilot design layer
+   Loaded after App.css. Owns the visual language of the workspace:
+   one set of tokens, readable type, calm surfaces, and the layout of the
+   Create -> Connect -> Earn product loop.
+   ========================================================================== */
+
+/* ---------- Tokens ------------------------------------------------------- */
+.app-shell, .dc-public {
+  --radius: 14px;
+  --radius-sm: 10px;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --earn: #3ddc97;
+  --tip: #ffb84d;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--bg);
+}
+
+.app-shell[data-theme='dark'], .modal-backdrop[data-theme='dark'] , .dc-public[data-theme='dark'] {
+  --bg: #0a0c11;
+  --surface: #11141b;
+  --surface-2: #171b24;
+  --line: #232938;
+  --line-strong: #323a4e;
+  --text: #e9ebf2;
+  --text-2: #b4bbcc;
+  --muted: #8089a0;
+  --accent: #a89bff;
+  --accent-strong: #7a67f0;
+  --accent-soft: rgba(139, 124, 255, .14);
+  --shadow: 0 1px 0 rgba(255, 255, 255, .03) inset;
+  --ui-border: #232938;
+  --ui-surface: #11141b;
+  --ui-surface-muted: #0d1017;
+  --ui-text: #e9ebf2;
+  --ui-muted: #8f98ae;
+  --ui-accent: #a89bff;
+}
+
+.app-shell[data-theme='light'], .modal-backdrop[data-theme='light'] , .dc-public[data-theme='light'] {
+  --bg: #f5f6fa;
+  --surface: #ffffff;
+  --surface-2: #f0f1f7;
+  --line: #e4e6ee;
+  --line-strong: #cfd3e0;
+  --text: #151826;
+  --text-2: #3f4659;
+  --muted: #6a7288;
+  --accent: #5b45d6;
+  --accent-strong: #6a54e6;
+  --accent-soft: rgba(106, 84, 230, .09);
+  --shadow: 0 1px 2px rgba(20, 24, 45, .05);
+  --ui-border: #e4e6ee;
+  --ui-surface: #ffffff;
+  --ui-surface-muted: #f5f6fa;
+  --ui-text: #151826;
+  --ui-muted: #666f85;
+  --ui-accent: #5b45d6;
+}
+
+/* ---------- Shell -------------------------------------------------------- */
+.app-shell, .app-shell .main-area { background: var(--bg); color: var(--text); }
+.app-shell .sidebar { width: 252px; padding: 22px 14px 14px; background: var(--surface); border-right: 1px solid var(--line); }
+.app-shell .main-area { margin-left: 252px; }
+.app-shell .topbar { height: 60px; padding: 0 40px; background: color-mix(in srgb, var(--surface) 88%, transparent); border-bottom: 1px solid var(--line); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 3; }
+.app-shell .page-content { max-width: 1200px; padding: 32px 40px 72px; }
+
+.app-shell .brand { margin: 0 8px 22px; }
+.app-shell .brand-mark { border-radius: 10px; transform: none; background: linear-gradient(140deg, #8b7cff, #5a45e0); box-shadow: 0 4px 14px rgba(106, 84, 230, .35); font-family: var(--font-mono); font-size: 12px; }
+.app-shell .brand-mark span { transform: none; }
+.app-shell .brand-name { font-size: 18px; letter-spacing: -.03em; color: var(--text); }
+.app-shell .brand-name > span { color: var(--accent); }
+.app-shell .brand-name small { font: 500 10px/1 var(--font-mono); letter-spacing: .12em; color: var(--muted); margin-top: 6px; }
+
+.app-shell .new-project { height: 42px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; box-shadow: none; background: var(--accent-strong); color: #fff; }
+.app-shell .new-project:hover { background: var(--accent-strong); filter: brightness(1.1); transform: none; }
+
+/* Navigation groups */
+.app-shell .navigation { display: grid; gap: 4px; margin-top: 6px; }
+.app-shell .nav-group { display: grid; gap: 2px; margin-top: 14px; }
+.app-shell .nav-group-label,
+.app-shell .side-label { margin: 0 10px 6px; font: 500 11px/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.app-shell .project-label { margin-top: 26px; }
+.app-shell .nav-link { min-height: 40px; padding: 0 12px; gap: 12px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; color: var(--text-2); position: relative; }
+.app-shell .nav-link .nav-icon { color: var(--muted); }
+.app-shell .nav-link:hover { color: var(--text); background: var(--surface-2); }
+.app-shell .nav-link.active { color: var(--text); background: var(--accent-soft); font-weight: 600; }
+.app-shell .nav-link.active::before { content: ''; position: absolute; left: -14px; top: 9px; bottom: 9px; width: 3px; border-radius: 0 3px 3px 0; background: var(--accent-strong); }
+.app-shell .nav-link.active .nav-icon { color: var(--accent); }
+.app-shell .nav-count { font: 500 12px var(--font-mono); color: var(--muted); }
+
+.app-shell .project-link { padding: 8px 12px; font-size: 13.5px; color: var(--text-2); border-radius: 8px; }
+.app-shell .project-link:hover, .app-shell .project-link.selected { color: var(--text); background: var(--surface-2); }
+.app-shell .project-dot { background: var(--accent); }
+.app-shell .sidebar-empty { font-size: 12.5px; color: var(--muted); }
+.app-shell .api-status { font-size: 12px; color: var(--muted); border-bottom-color: var(--line); }
+.app-shell .profile-chip strong { font-size: 13.5px; }
+.app-shell .profile-chip small { font-size: 12px; color: var(--muted); }
+.app-shell .avatar, .app-shell .top-avatar { background: var(--accent-soft); color: var(--accent); }
+.app-shell .top-avatar { background: linear-gradient(140deg, #8b7cff, #5a45e0); color: #fff; }
+
+.app-shell .breadcrumbs { font-size: 13px; color: var(--muted); }
+.app-shell .breadcrumbs strong { color: var(--text); font-weight: 600; }
+.app-shell .workspace-home-link,
+.app-shell .top-new-project,
+.app-shell .theme-toggle,
+.app-shell .project-select-wrap select { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); color: var(--text-2); font-size: 13px; }
+.app-shell .top-new-project { display: none; }
+.app-shell .workspace-home-link:hover, .app-shell .theme-toggle:hover { color: var(--text); border-color: var(--line-strong); }
+.app-shell .project-select-wrap select { max-width: 200px; padding-right: 28px; }
+
+/* ---------- Typography --------------------------------------------------- */
+.app-shell :is(.eyebrow, .panel-kicker, .community-section-kicker, .marketplace-section-kicker, .page-bar-eyebrow, .action-group-label, .stat-label) {
+  font: 500 11.5px/1.2 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted);
+}
+.app-shell :is(.welcome-copy h1, .page-heading h1, .dashboard-heading h1, .page-bar h1) {
+  font-family: var(--font-display); font-weight: 700; letter-spacing: -.035em; color: var(--text);
+}
+.app-shell .dashboard-heading h1 { font-size: 30px; margin: 10px 0 8px; }
+.app-shell .page-heading h1, .app-shell .page-bar h1 { font-size: 30px; line-height: 1.15; margin: 8px 0 8px; }
+.app-shell .dashboard-heading p, .app-shell .page-heading > p, .app-shell .page-bar p:not(.page-bar-eyebrow) { font-size: 15px; line-height: 1.6; color: var(--text-2); max-width: 640px; }
+.app-shell .heading-spark { display: none; }
+.app-shell :is(.panel-heading h2, .draft-panel-header h2, .source-list-heading h2) { font-family: var(--font-display); font-size: 17px; letter-spacing: -.02em; color: var(--text); }
+
+/* ---------- Surfaces ----------------------------------------------------- */
+.app-shell :is(.panel, .community-surface, .wallet-panel, .marketplace-product-card, .marketplace-overview article, .wallet-summary-card, .community-post, .community-creator) {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow);
+}
+.app-shell .feedback { border-radius: var(--radius-sm); font-size: 14px; }
+.app-shell .error-feedback { color: #ff9b9b; background: rgba(255, 107, 107, .08); border-color: rgba(255, 107, 107, .3); }
+.app-shell .error-feedback > span { background: rgba(255, 107, 107, .2); color: #ff9b9b; }
+.app-shell .success-feedback { color: #6fe8b2; background: rgba(61, 220, 151, .08); border-color: rgba(61, 220, 151, .28); }
+.app-shell[data-theme='light'] .error-feedback { color: #b42323; }
+.app-shell[data-theme='light'] .success-feedback { color: #14724a; }
+.app-shell .tag { font: 500 12.5px var(--font-mono); padding: 4px 9px; border-radius: 7px; color: var(--accent); background: var(--accent-soft); border: 1px solid transparent; }
+
+.app-shell .button, .app-shell .new-project { border-radius: var(--radius-sm); font-size: 14px; }
+.app-shell .button { min-height: 40px; font-weight: 600; }
+.app-shell .button-primary { background: var(--accent-strong); color: #fff; box-shadow: none; }
+.app-shell .button-primary:hover { background: var(--accent-strong); filter: brightness(1.1); transform: none; }
+.app-shell .button-secondary { background: var(--surface); color: var(--text); border-color: var(--line-strong); }
+.app-shell .button-secondary:hover { background: var(--surface-2); border-color: var(--line-strong); color: var(--text); }
+.app-shell :is(input, textarea, select) { color: var(--text); }
+
+/* ---------- Overview: pipeline -------------------------------------------- */
+.app-shell .dashboard-heading { align-items: flex-end; gap: 24px; flex-wrap: wrap; }
+.app-shell .pipeline { list-style: none; margin: 26px 0 22px; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
+.app-shell .pipeline-step { display: flex; align-items: center; gap: 12px; padding: 16px 18px; position: relative; min-width: 0; }
+.app-shell .pipeline-step + .pipeline-step { border-left: 1px solid var(--line); }
+.app-shell .pipeline-step strong { display: block; font-size: 14.5px; color: var(--text); }
+.app-shell .pipeline-step small { display: block; margin-top: 2px; font-size: 12.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.app-shell .pipeline-marker { flex: none; width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; border: 1.5px solid var(--line-strong); color: var(--muted); font: 600 12.5px var(--font-mono); }
+.app-shell .pipeline-step.done .pipeline-marker { border-color: var(--earn); background: rgba(61, 220, 151, .14); color: var(--earn); }
+.app-shell .pipeline-step.active { background: var(--accent-soft); }
+.app-shell .pipeline-step.active .pipeline-marker { border-color: var(--accent-strong); color: var(--accent); }
+.app-shell .pipeline-step.active strong { color: var(--accent); }
+
+.app-shell .dashboard-grid { grid-template-columns: minmax(0, 1.25fr) minmax(0, .85fr); gap: 20px; }
+.app-shell :is(.project-panel, .next-panel) { padding: 24px; min-height: 0; }
+.app-shell .snapshot-block > span { font: 500 11.5px var(--font-mono); letter-spacing: .1em; color: var(--muted); }
+.app-shell .snapshot-block p { font-size: 15px; line-height: 1.65; color: var(--text-2); }
+.app-shell .grounded-finding-list article { border-radius: 10px; background: var(--surface-2); border-left: 3px solid var(--accent-strong); }
+.app-shell .grounded-finding-list article p { color: var(--text); font-size: 14.5px; }
+.app-shell .grounded-finding-list small { font: 500 12px var(--font-mono); color: var(--muted); }
+.app-shell .panel-footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); }
+
+.app-shell .action-group-label { margin: 22px 0 8px; }
+.app-shell .generate-suite-card { border-radius: 12px; background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent-strong) 45%, transparent); color: var(--text); }
+.app-shell .generate-suite-copy strong { font-size: 15px; color: var(--text); }
+.app-shell .generate-suite-copy small { font-size: 13px; color: var(--text-2); }
+.app-shell .action-tile { width: 100%; display: flex; align-items: center; gap: 12px; padding: 12px; margin-top: 6px; text-align: left; border: 1px solid transparent; border-radius: 12px; background: transparent; color: var(--text); }
+.app-shell .action-tile:hover { background: var(--surface-2); border-color: var(--line); }
+.app-shell .action-tile strong { display: block; font-size: 14.5px; color: var(--text); }
+.app-shell .action-tile small { display: block; margin-top: 2px; font-size: 13px; color: var(--muted); }
+.app-shell .action-tile b { margin-left: auto; color: var(--muted); display: grid; }
+.app-shell .action-icon { width: 34px; height: 34px; flex: none; display: grid; place-items: center; border-radius: 9px; }
+.app-shell .action-icon.lilac { background: var(--accent-soft); color: var(--accent); }
+.app-shell .action-icon.peach { background: rgba(255, 150, 90, .14); color: #ff9a62; }
+.app-shell .action-icon.mint { background: rgba(61, 220, 151, .14); color: var(--earn); }
+.app-shell .action-icon.amber { background: rgba(255, 184, 77, .14); color: var(--tip); }
+.app-shell .evidence-hint { margin: 22px 0 0; padding: 14px 16px; border-radius: 12px; background: var(--surface-2); font-size: 13.5px; line-height: 1.6; color: var(--text-2); }
+.app-shell .evidence-hint strong { color: var(--text); }
+
+/* Empty workspace (first run) */
+.app-shell .welcome-copy h1 { font-size: clamp(34px, 4.4vw, 52px); line-height: 1.08; }
+.app-shell .welcome-copy h1 em { color: var(--accent); }
+.app-shell .welcome-copy > p { font-size: 16px; max-width: 480px; color: var(--text-2); line-height: 1.7; }
+.app-shell .floating-card { background: var(--surface); border-color: var(--line); box-shadow: var(--shadow); }
+.app-shell .floating-card strong { font-size: 14px; color: var(--text); }
+.app-shell .floating-card small { font-size: 12.5px; color: var(--muted); }
+.app-shell .welcome-features strong { font-size: 14px; color: var(--text); }
+.app-shell .welcome-features p { font-size: 13.5px; color: var(--text-2); line-height: 1.6; }
+.app-shell .trust-note, .app-shell .empty-page-hint { font-size: 13px; color: var(--muted); }
+
+/* ---------- Shared page bar (Community) ----------------------------------- */
+.app-shell .creator-page header.page-bar { max-width: none; display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; flex-wrap: wrap; margin-bottom: 24px; }
+.app-shell .page-bar-eyebrow { display: flex; align-items: center; gap: 8px; margin: 0; }
+.app-shell .page-bar-stats { display: flex; gap: 22px; font-size: 13.5px; color: var(--muted); }
+.app-shell .page-bar-stats strong { margin-right: 4px; font: 600 16px var(--font-mono); color: var(--text); }
+
+/* ---------- Community ---------------------------------------------------- */
+.app-shell .creator-page { color: var(--text); font-size: 15px; }
+.app-shell .creator-page header { max-width: none; }
+.app-shell .community-workspace { grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; }
+.app-shell .community-main-column { display: grid; gap: 18px; min-width: 0; }
+.app-shell .community-side-column { position: sticky; top: 84px; display: grid; gap: 16px; }
+.app-shell .community-composer { padding: 20px; }
+.app-shell .community-composer textarea { background: var(--surface-2); border: 1px solid var(--line); border-radius: 12px; color: var(--text); font-size: 15px; line-height: 1.6; min-height: 112px; }
+.app-shell .community-composer textarea:focus { border-color: var(--accent-strong); outline: 0; box-shadow: 0 0 0 3px var(--accent-soft); }
+.app-shell .community-composer-tools button { color: var(--accent); font-weight: 600; font-size: 14px; background: none; border: 0; display: inline-flex; gap: 6px; align-items: center; }
+.app-shell .community-composer-tools span, .app-shell .community-private-note { font-size: 12.5px; color: var(--muted); }
+.app-shell :is(.community-primary-button, .marketplace-primary-button, .wallet-send-button, .wallet-connect-button) { border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; min-height: 42px; }
+.app-shell .community-feed-heading h2 { font-size: 19px; color: var(--text); letter-spacing: -.02em; }
+.app-shell .community-feed-tabs { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 3px; }
+.app-shell .community-feed-tabs button { font-size: 13.5px; border-radius: 7px; color: var(--muted); background: none; border: 0; padding: 6px 12px; font-weight: 600; }
+.app-shell .community-feed-tabs button.selected { background: var(--accent-soft); color: var(--accent); }
+.app-shell .community-feed-section { display: grid; gap: 12px; }
+
+.app-shell .community-post { padding: 18px 20px; }
+.app-shell .community-post-header { display: flex; align-items: center; gap: 12px; }
+.app-shell .community-post-author strong { display: block; font-size: 15px; color: var(--text); }
+.app-shell .community-post-author span { font: 400 13px var(--font-mono); color: var(--muted); }
+.app-shell .community-post-header time { margin-left: auto; font-size: 12.5px; color: var(--muted); }
+.app-shell .community-post-body { margin: 12px 0 0; font-size: 15.5px; line-height: 1.7; color: var(--text); white-space: pre-wrap; }
+.app-shell .community-post-actions { display: flex; gap: 8px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+.app-shell .community-tip-button { display: inline-flex; align-items: center; gap: 7px; padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(255, 184, 77, .35); background: rgba(255, 184, 77, .08); color: var(--tip); font: 600 13px var(--font-sans); }
+.app-shell .community-tip-button:hover { background: rgba(255, 184, 77, .16); }
+.app-shell[data-theme='light'] .community-tip-button, .app-shell[data-theme='light'] .community-tip-icon { color: #a8630a; }
+.app-shell .community-delete-button { margin-left: 8px; font-size: 12.5px; color: var(--muted); background: none; border: 0; }
+.app-shell .community-delete-button:hover { color: #ff7b7b; }
+
+.app-shell .community-avatar { background: linear-gradient(140deg, #8b7cff, #5a45e0); color: #fff; font-weight: 700; }
+.app-shell .community-profile-card { overflow: hidden; }
+.app-shell .community-profile-cover { height: 64px; background: linear-gradient(120deg, #4a3bc4, #7a67f0 60%, #b09cff); }
+.app-shell .community-profile-content h2 { font-size: 18px; color: var(--text); }
+.app-shell .community-profile-handle { font: 400 13.5px var(--font-mono); color: var(--muted); }
+.app-shell .community-profile-counts { font-size: 13.5px; color: var(--muted); }
+.app-shell .community-profile-counts strong { color: var(--text); }
+.app-shell .community-field-label { font-size: 13px; font-weight: 600; color: var(--text-2); }
+.app-shell .community-creator { display: flex; align-items: flex-start; gap: 12px; padding: 12px; box-shadow: none; background: transparent; border-color: transparent; }
+.app-shell .community-creator:hover { background: var(--surface-2); }
+.app-shell .community-creator-copy strong { font-size: 14.5px; color: var(--text); }
+.app-shell .community-creator-copy span { margin-left: 6px; font: 400 12.5px var(--font-mono); color: var(--muted); }
+.app-shell .community-creator-copy p { margin: 4px 0 0; font-size: 13px; line-height: 1.5; color: var(--text-2); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.app-shell .community-creator-copy small { font-size: 12px; color: var(--muted); }
+.app-shell .community-creator-actions { margin-left: auto; display: flex; align-items: center; gap: 6px; flex: none; }
+.app-shell .community-follow-button { padding: 6px 12px; border-radius: 999px; font: 600 13px var(--font-sans); border: 1px solid var(--accent-strong); background: var(--accent-strong); color: #fff; }
+.app-shell .community-follow-button.following { background: transparent; color: var(--text-2); border-color: var(--line-strong); }
+.app-shell .community-tip-icon { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; border: 1px solid rgba(255, 184, 77, .35); background: rgba(255, 184, 77, .08); color: var(--tip); }
+.app-shell .community-tip-icon:hover { background: rgba(255, 184, 77, .18); }
+.app-shell .community-search { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; }
+.app-shell .community-wallet-card { width: 100%; display: flex; align-items: center; gap: 12px; padding: 16px; text-align: left; border-radius: var(--radius); border: 1px solid rgba(255, 184, 77, .3); background: rgba(255, 184, 77, .06); color: var(--text); }
+.app-shell .community-wallet-card strong { display: block; font-size: 14.5px; }
+.app-shell .community-wallet-card small { display: block; margin-top: 2px; font-size: 13px; color: var(--text-2); }
+.app-shell .community-wallet-icon { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 10px; background: rgba(255, 184, 77, .16); color: var(--tip); }
+
+/* ---------- Marketplace -------------------------------------------------- */
+.app-shell .marketplace-hero { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 24px 28px; margin-bottom: 18px; border: 1px solid var(--line); border-radius: var(--radius); background: linear-gradient(120deg, var(--accent-soft), transparent 70%), var(--surface); min-height: 0; max-width: none; }
+.app-shell .marketplace-hero-visual { display: none; }
+.app-shell .marketplace-hero-copy h1 { margin: 8px 0 8px; font-size: 28px; line-height: 1.15; color: var(--text); }
+.app-shell .marketplace-hero-copy > p:not(.marketplace-eyebrow) { font-size: 15px; color: var(--text-2); max-width: 520px; }
+.app-shell .marketplace-eyebrow { font: 500 11.5px var(--font-mono); letter-spacing: .1em; color: var(--muted); }
+.app-shell .marketplace-hero-actions { margin-top: 0; flex: none; }
+.app-shell .marketplace-hero-copy { flex: 1; }
+.app-shell .marketplace-hero-secondary { border-radius: var(--radius-sm); font-size: 14px; background: var(--surface); color: var(--text); border: 1px solid var(--line-strong); min-height: 42px; padding: 0 16px; }
+.app-shell .marketplace-search { width: 100%; max-width: 460px; }
+.app-shell .marketplace-search input { flex: 1; min-width: 0; font-size: 14.5px; }
+.app-shell .marketplace-search button { flex: none; white-space: nowrap; border-radius: 8px; min-height: 34px; padding: 0 14px; font-size: 13.5px; }
+.app-shell .marketplace-overview { gap: 12px; }
+.app-shell .marketplace-product-card { transition: border-color .15s, transform .15s; }
+.app-shell .marketplace-product-card:hover { border-color: var(--line-strong); transform: translateY(-2px); }
+.app-shell .marketplace-product-price { font: 600 15px var(--font-mono); color: var(--earn); }
+.app-shell[data-theme='light'] .marketplace-product-price { color: #0f8a58; }
+.app-shell .marketplace-product-seller { font: 400 13px var(--font-mono); color: var(--muted); }
+.app-shell .marketplace-product-description { font-size: 14px; line-height: 1.6; color: var(--text-2); }
+
+/* ---------- Wallet ------------------------------------------------------- */
+.app-shell .wallet-page-header { max-width: none; align-items: flex-end; margin-bottom: 18px; }
+.app-shell .wallet-account-hero { padding: 24px 28px; border-radius: var(--radius); border: 1px solid var(--line); background: linear-gradient(120deg, var(--accent-soft), transparent 75%), var(--surface); }
+.app-shell .wallet-hero-decoration { display: none; }
+.app-shell .wallet-balance-value { font: 700 36px var(--font-mono); letter-spacing: -.03em; color: var(--text); }
+.app-shell .wallet-account-address code { font: 400 13px var(--font-mono); color: var(--text-2); }
+.app-shell .wallet-account-label span:last-child { font: 500 11.5px var(--font-mono); letter-spacing: .1em; color: var(--muted); }
+.app-shell .wallet-account-action strong { color: var(--text); }
+.app-shell .wallet-account-action p, .app-shell .wallet-account-main p { color: var(--text-2); font-size: 14px; }
+.app-shell .wallet-network-pill { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(61, 220, 151, .35); background: rgba(61, 220, 151, .08); color: var(--earn); font: 500 12.5px var(--font-mono); }
+.app-shell .wallet-network-pill > span { width: 7px; height: 7px; border-radius: 50%; background: var(--earn); }
+.app-shell[data-theme='light'] .wallet-network-pill { color: #0f8a58; }
+.app-shell .wallet-summary-card strong, .app-shell .wallet-panel h2 { color: var(--text); }
+.app-shell .wallet-risk-note, .app-shell .wallet-safety-footnote { font-size: 13px; color: var(--text-2); }
+.app-shell .wallet-quick-amounts button { border-radius: 8px; font: 500 13px var(--font-mono); }
+.app-shell .wallet-activity-amount { font: 600 15px var(--font-mono); color: var(--earn); }
+
+/* ---------- Studio / Case studies / Sources ------------------------------- */
+.app-shell .page-heading { margin-bottom: 22px; }
+.app-shell :is(.studio-tab, .studio-tabs button) { font-size: 14px; }
+.app-shell textarea, .app-shell input[type='text'], .app-shell input:not([type]) { font-size: 15px; }
+
+/* ---------- Responsive --------------------------------------------------- */
+@media (max-width: 1100px) {
+  .app-shell .community-workspace { grid-template-columns: 1fr; }
+  .app-shell .community-side-column { position: static; }
+  .app-shell .dashboard-grid { grid-template-columns: 1fr; }
+  .app-shell .pipeline { grid-template-columns: repeat(2, 1fr); }
+  .app-shell .pipeline-step:nth-child(3) { border-left: 0; }
+  .app-shell .pipeline-step:nth-child(n+3) { border-top: 1px solid var(--line); }
+}
+@media (max-width: 760px) {
+  .app-shell .main-area { margin-left: 0; }
+  .app-shell .page-content { padding: 22px 16px 96px; }
+  .app-shell .topbar { padding: 0 16px; }
+  .app-shell .nav-group { display: contents; margin: 0; }
+  .app-shell .nav-group-label { display: none; }
+  .app-shell .nav-link.active::before { display: none; }
+  .app-shell .marketplace-hero { flex-direction: column; align-items: flex-start; padding: 20px; }
+  .app-shell .page-bar-stats { gap: 16px; }
+  .app-shell .pipeline { grid-template-columns: 1fr; }
+  .app-shell .pipeline-step + .pipeline-step { border-left: 0; border-top: 1px solid var(--line); }
+}
+
+/* ---------- Community refinements ---------------------------------------- */
+.app-shell :is(.community-primary-button, .community-secondary-button, .marketplace-primary-button, .wallet-send-button, .wallet-connect-button) { white-space: nowrap; }
+.app-shell .community-publish-controls { display: flex; align-items: center; gap: 14px; flex: none; }
+.app-shell .community-composer-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.app-shell .community-discovery { order: 1; padding: 18px; }
+.app-shell .community-wallet-card { order: 2; }
+.app-shell .community-profile-card { order: 3; }
+.app-shell .creator-page header.page-bar { margin-bottom: 20px; align-items: flex-end; }
+.app-shell .community-profile-edit { margin-top: 14px; border-top: 1px solid var(--line); padding-top: 12px; }
+.app-shell .community-profile-edit summary { cursor: pointer; font-size: 14px; font-weight: 600; color: var(--accent); list-style: none; }
+.app-shell .community-profile-edit summary::-webkit-details-marker { display: none; }
+.app-shell .community-profile-edit[open] summary { margin-bottom: 8px; }
+.app-shell .community-creator-copy { flex: 1; min-width: 0; }
+.app-shell .community-creator-copy strong { display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; }
+.app-shell .community-creator-copy small { display: block; margin-top: 2px; }
+.app-shell .community-workspace { grid-template-columns: minmax(0, 1fr) 360px; }
+
+/* ---------- Social dashboard --------------------------------------------- */
+.app-shell .social-grid { display: grid; grid-template-columns: 340px minmax(0, 1fr); gap: 24px; align-items: start; }
+.app-shell .social-profile-col { display: grid; gap: 16px; position: sticky; top: 84px; }
+.app-shell .social-profile, .app-shell .social-posts, .app-shell .social-discover { padding: 22px; }
+.app-shell .social-profile-head { display: flex; align-items: center; gap: 14px; }
+.app-shell .social-profile-head h2 { margin: 0; font-size: 19px; color: var(--text); }
+.app-shell .social-avatar { width: 56px; height: 56px; font-size: 22px; }
+.app-shell .social-bio { margin: 14px 0 0; font-size: 14.5px; line-height: 1.6; color: var(--text-2); }
+.app-shell .social-stats { display: grid; grid-template-columns: repeat(3, 1fr); margin: 18px 0; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.app-shell .social-stats > div { padding: 12px 8px; text-align: center; }
+.app-shell .social-stats > div + div { border-left: 1px solid var(--line); }
+.app-shell .social-stats strong { display: block; font: 600 20px var(--font-mono); color: var(--text); }
+.app-shell .social-stats span { font-size: 12.5px; color: var(--muted); }
+.app-shell .social-wallet { display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 12px; background: var(--surface-2); font-size: 13px; color: var(--text-2); }
+.app-shell .social-wallet.verified { background: rgba(61, 220, 151, .08); }
+.app-shell .social-wallet > span { flex: 1; min-width: 0; }
+.app-shell .social-wallet code { font: 400 12.5px var(--font-mono); }
+.app-shell .social-wallet button { flex: none; border: 1px solid var(--line-strong); background: var(--surface); color: var(--text); border-radius: 8px; padding: 5px 10px; font-size: 13px; font-weight: 600; }
+.app-shell .social-section-title { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; color: var(--accent); }
+.app-shell .social-section-title h2 { margin: 0; font-size: 17px; color: var(--text); }
+.app-shell .social-mini-post { padding: 12px 0; border-top: 1px solid var(--line); }
+.app-shell .social-mini-post p { margin: 0; font-size: 14px; line-height: 1.55; color: var(--text); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.app-shell .social-mini-post time { font-size: 12px; color: var(--muted); }
+.app-shell .social-discover .community-search { margin-bottom: 12px; max-width: 520px; }
+.app-shell .social-filter { display: inline-flex; margin-bottom: 18px; }
+.app-shell .social-people { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+.app-shell .social-person { display: flex; gap: 12px; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); flex-wrap: wrap; }
+.app-shell .social-person:hover { border-color: var(--line-strong); background: var(--surface-2); }
+.app-shell .social-person-copy { flex: 1; min-width: 0; }
+.app-shell .social-person-copy strong { display: block; font-size: 15px; color: var(--text); }
+.app-shell .social-person-copy span { font: 400 12.5px var(--font-mono); color: var(--muted); }
+.app-shell .social-person-copy p { margin: 6px 0 4px; font-size: 13.5px; line-height: 1.5; color: var(--text-2); }
+.app-shell .social-person-copy small { font-size: 12.5px; color: var(--muted); }
+.app-shell .social-person-actions { width: 100%; display: flex; gap: 8px; padding-left: 52px; }
+@media (max-width: 1100px) {
+  .app-shell .social-grid { grid-template-columns: 1fr; }
+  .app-shell .social-profile-col { position: static; }
+}
+.app-shell .community-wallet-card > span:not(.community-wallet-icon) { flex: 1; min-width: 0; }
+.app-shell .community-wallet-card > svg { flex: none; }
+.app-shell .social-discover .community-search { max-width: none; }
+.app-shell .social-wallet { flex-wrap: wrap; }
+
+/* ---------- Final responsive pass (keep last) ----------------------------- */
+@media (max-width: 1100px) {
+  .app-shell .community-workspace { grid-template-columns: minmax(0, 1fr); }
+  .app-shell .community-side-column { position: static; }
+}
+@media (max-width: 760px) {
+  .app-shell .topbar { gap: 8px; }
+  .app-shell .breadcrumbs span:first-child, .app-shell .breadcrumbs > span + span { display: none; }
+  .app-shell .workspace-home-link { font-size: 0; gap: 0; padding: 0 10px; }
+  .app-shell .workspace-home-link svg { font-size: 14px; }
+  .app-shell .theme-toggle { font-size: 0; padding: 0 10px; }
+  .app-shell .project-select-wrap select { max-width: 130px; }
+  .app-shell .wallet-balance-value { font-size: 26px; overflow-wrap: anywhere; }
+  .app-shell .wallet-account-address { overflow-wrap: anywhere; }
+  .app-shell .wallet-account-address code { overflow-wrap: anywhere; white-space: normal; }
+  .app-shell .page-content, .app-shell .creator-page { max-width: 100vw; overflow-x: clip; }
+  .app-shell .social-person-actions { padding-left: 0; }
+  .app-shell .page-bar-stats { width: 100%; }
+}
+
+/* ---------- Import dialog ------------------------------------------------ */
+.modal-backdrop { font-family: var(--font-sans); color: var(--text); }
+.modal-backdrop .import-modal { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 24px 80px rgba(0, 0, 0, .5); color: var(--text); }
+.modal-backdrop .modal-eyebrow { font: 500 11.5px var(--font-mono); letter-spacing: .1em; color: var(--muted); }
+.modal-backdrop .modal-description { font-size: 14.5px; color: var(--text-2); }
+.modal-backdrop .import-tabs { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 3px; }
+.modal-backdrop .import-tabs button { font-size: 14px; color: var(--muted); border-radius: 7px; }
+.modal-backdrop .import-tabs button.selected { background: var(--accent-soft); color: var(--accent); }
+.modal-backdrop :is(input, textarea) { background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; color: var(--text); font-size: 15px; }
+.modal-backdrop .modal-close { color: var(--muted); }
+
+/* ==========================================================================
+   Page polish: Overview, Studio, Case studies, Sources, Community
+   ========================================================================== */
+
+/* ---------- Overview ------------------------------------------------------ */
+.app-shell .dashboard-grid { align-items: start; }
+.app-shell .project-panel { display: flex; flex-direction: column; gap: 4px; }
+.app-shell .project-panel .evidence-hint { margin: 18px 0 0; }
+.app-shell .project-panel .panel-footer { margin-top: 18px; padding-top: 14px; display: flex; gap: 10px; align-items: center; justify-content: space-between; }
+.app-shell .project-panel .panel-footer a { color: var(--accent); font-weight: 600; }
+
+/* ---------- Shared segmented tabs ----------------------------------------- */
+.app-shell :is(.studio-mode-tabs, .draft-view-tabs) { display: inline-flex; gap: 2px; padding: 3px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.app-shell :is(.studio-mode-tabs, .draft-view-tabs) button { min-height: 32px; padding: 0 14px; border: 0; border-radius: 7px; background: transparent; color: var(--muted); font: 600 13.5px var(--font-sans); }
+.app-shell :is(.studio-mode-tabs, .draft-view-tabs) button:hover { color: var(--text); }
+.app-shell :is(.studio-mode-tabs, .draft-view-tabs) button.selected { background: var(--accent-soft); color: var(--accent); }
+.app-shell .studio-mode-tabs { margin-bottom: 20px; }
+
+/* ---------- Studio -------------------------------------------------------- */
+.app-shell .studio-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; align-items: start; }
+.app-shell .studio-controls { display: grid; gap: 14px; }
+.app-shell .studio-controls .panel { padding: 18px; }
+.app-shell .section-title { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 14px; }
+.app-shell .section-title h2 { margin: 0; font-size: 15.5px; color: var(--text); letter-spacing: -.01em; }
+.app-shell .section-title p { margin: 2px 0 0; font-size: 13px; line-height: 1.5; color: var(--muted); }
+.app-shell .step-number { flex: none; width: 26px; height: 26px; display: grid; place-items: center; border-radius: 8px; background: var(--accent-soft); color: var(--accent); font: 600 12px var(--font-mono); }
+
+/* one option-card language for angles and formats */
+.app-shell :is(.angle-option, .format-option) { width: 100%; display: flex; align-items: center; gap: 12px; padding: 11px 13px; text-align: left; border: 1px solid var(--line); border-radius: 11px; background: var(--surface-2); color: var(--text); transition: border-color .15s, background .15s; }
+.app-shell :is(.angle-option, .format-option):hover { border-color: var(--line-strong); }
+.app-shell :is(.angle-option, .format-option).chosen { border-color: var(--accent-strong); background: var(--accent-soft); box-shadow: 0 0 0 1px var(--accent-strong) inset; }
+.app-shell :is(.angle-option, .format-option) strong { display: block; font-size: 14px; color: var(--text); }
+.app-shell :is(.angle-option, .format-option) small { display: block; margin-top: 2px; font-size: 12.5px; line-height: 1.45; color: var(--muted); }
+.app-shell .angle-options { display: grid; gap: 8px; }
+.app-shell .format-options { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.app-shell .format-option { flex-direction: column; align-items: flex-start; gap: 2px; }
+.app-shell .angle-icon { flex: none; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 8px; background: var(--accent-soft); color: var(--accent); font-size: 14px; }
+.app-shell .radio-dot { margin-left: auto; flex: none; width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--line-strong); }
+.app-shell .angle-option.chosen .radio-dot { border-color: var(--accent-strong); background: radial-gradient(circle, var(--accent-strong) 45%, transparent 50%); }
+.app-shell .context-panel textarea, .app-shell .case-start textarea { width: 100%; min-height: 104px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 11px; background: var(--surface-2); color: var(--text); font-size: 14.5px; line-height: 1.6; resize: vertical; }
+.app-shell .context-panel textarea:focus, .app-shell .case-start textarea:focus, .app-shell .case-section textarea:focus { outline: 0; border-color: var(--accent-strong); box-shadow: 0 0 0 3px var(--accent-soft); }
+.app-shell .context-note { margin-top: 8px; font-size: 12.5px; color: var(--muted); }
+.app-shell .generate-button { position: sticky; bottom: 16px; width: 100%; min-height: 46px; box-shadow: 0 8px 24px rgba(0, 0, 0, .35); }
+.app-shell .prerequisite-note { font-size: 13px; color: var(--tip); }
+
+/* draft panel */
+.app-shell .draft-panel { position: sticky; top: 84px; max-height: calc(100vh - 104px); overflow: auto; padding: 22px; }
+.app-shell .draft-panel-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
+.app-shell .draft-panel-header h2 { margin: 6px 0 0; font-size: 20px; }
+.app-shell .linkedin-badge { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 6px; background: var(--accent-strong, #6d4fe0); color: #fff; font: 700 14px var(--font-sans); }
+.app-shell .draft-toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+.app-shell .draft-toolbar .draft-regenerate { margin-left: auto; min-height: 34px; padding: 0 14px; font-size: 13.5px; }
+.app-shell .review-chip { display: inline-flex; align-items: center; gap: 7px; padding: 5px 11px; border-radius: 999px; font: 600 12.5px var(--font-sans); }
+.app-shell .review-chip.warn { color: var(--tip); background: rgba(255, 184, 77, .1); border: 1px solid rgba(255, 184, 77, .3); }
+.app-shell .review-chip.ok { color: var(--earn); background: rgba(61, 220, 151, .1); border: 1px solid rgba(61, 220, 151, .3); }
+.app-shell[data-theme='light'] .review-chip.warn { color: #a8630a; }
+.app-shell[data-theme='light'] .review-chip.ok { color: #0f8a58; }
+.app-shell .format-preview { width: 100%; padding: 18px 20px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); color: var(--text); font: 400 15px/1.7 var(--font-sans); resize: vertical; }
+.app-shell .draft-hint { margin: 8px 0 0; font-size: 12.5px; color: var(--muted); }
+.app-shell .draft-editor { display: grid; gap: 14px; }
+.app-shell .draft-editor label, .app-shell .case-section > span { display: grid; gap: 6px; font: 500 11.5px var(--font-mono); letter-spacing: .1em; color: var(--muted); text-transform: uppercase; }
+.app-shell .draft-editor :is(input, textarea) { width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); color: var(--text); font: 400 14.5px/1.6 var(--font-sans); letter-spacing: 0; text-transform: none; }
+.app-shell .draft-editor :is(input, textarea):focus { outline: 0; border-color: var(--accent-strong); box-shadow: 0 0 0 3px var(--accent-soft); }
+.app-shell .review-note { display: flex; gap: 10px; margin: 16px 0 0; padding: 12px 14px; border-radius: 11px; background: var(--accent-soft); color: var(--text-2); font-size: 13.5px; }
+.app-shell .review-note p { margin: 0; }
+.app-shell .review-note strong { color: var(--text); }
+.app-shell .draft-actions, .app-shell .case-footer { position: sticky; bottom: -22px; display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; margin: 18px -22px -22px; padding: 14px 22px; border-top: 1px solid var(--line); background: var(--surface); border-radius: 0 0 var(--radius) var(--radius); }
+.app-shell .draft-help, .app-shell .case-footer > span { font-size: 12.5px; color: var(--muted); }
+.app-shell .draft-action-buttons { display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto; }
+.app-shell .draft-placeholder { display: grid; place-items: center; gap: 6px; padding: 48px 12px 28px; text-align: center; }
+.app-shell .draft-placeholder strong { font-size: 16px; color: var(--text); }
+.app-shell .draft-placeholder p { margin: 0; font-size: 14px; color: var(--muted); }
+.app-shell .placeholder-footer { display: flex; gap: 24px; margin-top: 24px; font-size: 12.5px; color: var(--muted); }
+
+/* README mode */
+.app-shell .readme-studio { padding: 24px; }
+.app-shell .readme-studio-heading { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
+.app-shell .readme-studio-heading p { margin: 6px 0 0; max-width: 560px; font-size: 14px; color: var(--text-2); }
+.app-shell .readme-actions { display: flex; gap: 8px; align-items: flex-start; }
+.app-shell .readme-editor { width: 100%; min-height: 420px; padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); color: var(--text); font: 400 13.5px/1.7 var(--font-mono); }
+.app-shell .readme-review-note, .app-shell .readme-status { margin: 10px 0 0; font-size: 13px; color: var(--muted); }
+
+/* ---------- Evidence check (shared by Studio + Case studies) --------------- */
+.app-shell .claims-box { margin-top: 20px; padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); }
+.app-shell .claims-heading { display: flex; align-items: center; gap: 12px; }
+.app-shell .claims-heading strong { display: block; font-size: 14.5px; color: var(--text); }
+.app-shell .claims-heading small { font-size: 12.5px; color: var(--muted); }
+.app-shell .claims-heading b { margin-left: auto; font: 600 13px var(--font-mono); color: var(--text-2); }
+.app-shell .claims-check { width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; background: rgba(61, 220, 151, .15); color: var(--earn); font-size: 13px; }
+.app-shell .claim-badges { display: flex; gap: 8px; margin: 12px 0 4px; }
+.app-shell .supported-badge, .app-shell .review-badge { padding: 3px 9px; border-radius: 999px; font: 600 12px var(--font-sans); }
+.app-shell .supported-badge { color: var(--earn); background: rgba(61, 220, 151, .12); }
+.app-shell .review-badge { color: var(--tip); background: rgba(255, 184, 77, .12); }
+.app-shell .claim-row { display: flex; gap: 12px; padding: 12px 0; border-top: 1px solid var(--line); }
+.app-shell .claim-row:first-of-type { margin-top: 10px; }
+.app-shell .claim-row p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--text); }
+.app-shell .claim-row small { display: block; margin-top: 3px; font: 400 12.5px var(--font-mono); color: var(--muted); }
+.app-shell .claim-row blockquote { margin: 8px 0 0; padding: 8px 12px; border-left: 2px solid var(--accent-strong); border-radius: 0 8px 8px 0; background: var(--surface); font: 400 12.5px var(--font-mono); color: var(--text-2); overflow-x: auto; }
+.app-shell .claim-status { flex: none; width: 20px; height: 20px; margin-top: 1px; display: grid; place-items: center; border-radius: 50%; font-size: 11px; font-weight: 700; }
+.app-shell .claim-status.good { color: var(--earn); background: rgba(61, 220, 151, .15); }
+.app-shell .claim-status.caution { color: var(--tip); background: rgba(255, 184, 77, .15); }
+
+/* ---------- Case studies -------------------------------------------------- */
+.app-shell .case-start { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 0; padding: 0; overflow: hidden; max-width: 960px; }
+.app-shell .case-outline { padding: 28px; border-right: 1px solid var(--line); background: var(--surface-2); }
+.app-shell .case-outline ol { list-style: none; margin: 16px 0; padding: 0; display: grid; gap: 4px; }
+.app-shell .case-outline li { display: flex; gap: 12px; align-items: center; padding: 9px 0; font-size: 14.5px; color: var(--text); border-bottom: 1px dashed var(--line); }
+.app-shell .case-outline li span { font: 500 12px var(--font-mono); color: var(--accent); }
+.app-shell .case-outline p { margin: 0; font-size: 13px; line-height: 1.6; color: var(--muted); }
+.app-shell .case-start-content { padding: 32px; display: grid; gap: 14px; align-content: start; }
+.app-shell .case-start-content h2 { margin: 0; font-size: 26px; letter-spacing: -.03em; color: var(--text); }
+.app-shell .case-start-content > p { margin: 0; font-size: 15px; line-height: 1.65; color: var(--text-2); }
+.app-shell .field-label { display: grid; gap: 8px; font-size: 14px; font-weight: 600; color: var(--text); }
+.app-shell .case-start-content .button { justify-self: start; min-height: 44px; padding: 0 20px; }
+
+.app-shell .case-editor { padding: 24px; max-width: 1040px; }
+.app-shell .case-editor-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.app-shell .case-editor-top > div:first-child { flex: 1 1 420px; min-width: 0; }
+.app-shell .case-title-input { width: 100%; margin-top: 8px; padding: 6px 0; border: 0; border-bottom: 1px solid transparent; background: transparent; color: var(--text); font: 700 24px/1.25 var(--font-display); letter-spacing: -.03em; }
+.app-shell .case-title-input:hover, .app-shell .case-title-input:focus { outline: 0; border-bottom-color: var(--accent-strong); }
+.app-shell .export-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.app-shell .case-editor-intro { margin: 6px 0 14px; font-size: 14px; color: var(--muted); }
+.app-shell .case-sections { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; align-items: stretch; }
+.app-shell .case-section { display: grid; grid-template-rows: auto 1fr; gap: 6px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-2); }
+.app-shell .case-section textarea { width: 100%; min-height: 96px; padding: 8px 10px; border: 1px solid transparent; border-radius: 8px; background: transparent; color: var(--text); font: 400 14.5px/1.65 var(--font-sans); resize: vertical; field-sizing: content; }
+.app-shell .case-section textarea:hover { border-color: var(--line); }
+.app-shell .case-section:has(textarea[rows='3']) { grid-column: 1 / -1; }
+.app-shell .review-status { margin: 0 0 4px; padding: 12px 14px; border-radius: 11px; border: 1px solid rgba(255, 184, 77, .3); background: rgba(255, 184, 77, .08); font-size: 13.5px; color: var(--text-2); }
+.app-shell .review-status strong { display: block; color: var(--tip); font-size: 13.5px; }
+.app-shell .review-status span { font-size: 13px; }
+.app-shell .review-status-supported { border-color: rgba(61, 220, 151, .3); background: rgba(61, 220, 151, .08); }
+.app-shell .review-status-supported strong { color: var(--earn); }
+
+/* ---------- Sources ------------------------------------------------------- */
+.app-shell .source-summary { display: flex; align-items: center; gap: 18px; padding: 18px 22px; }
+.app-shell .source-file-search input, .app-shell .source-search input { width: 100%; max-width: 360px; min-height: 40px; padding: 0 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); color: var(--text); font-size: 14px; }
+.app-shell .source-row, .app-shell .source-file { border-bottom: 1px solid var(--line); }
+.app-shell .source-row small, .app-shell .source-file small { font: 400 12.5px var(--font-mono); color: var(--muted); }
+
+/* ---------- Community: composer & feed ------------------------------------ */
+.app-shell .community-composer-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; }
+.app-shell .community-ai-link { display: inline-flex; align-items: center; gap: 7px; padding: 8px 12px; border: 1px solid var(--line-strong); border-radius: 10px; background: transparent; color: var(--accent); font: 600 13.5px var(--font-sans); }
+.app-shell .community-ai-link:hover { background: var(--accent-soft); }
+.app-shell .community-publish-controls { display: flex; align-items: center; gap: 14px; margin-left: auto; }
+.app-shell .community-char-count { font: 400 12.5px var(--font-mono); color: var(--muted); }
+.app-shell .community-char-count.near-limit { color: var(--tip); }
+.app-shell .community-primary-button { display: inline-flex; align-items: center; gap: 8px; padding: 0 18px; border: 0; background: var(--accent-strong); color: #fff; }
+.app-shell .community-primary-button:disabled { opacity: .45; }
+.app-shell .community-post-actions { display: flex; align-items: center; gap: 10px; }
+.app-shell .community-post-own { font: 400 12.5px var(--font-mono); color: var(--muted); }
+.app-shell .community-delete-button { margin-left: auto; padding: 4px 8px; border-radius: 6px; }
+.app-shell .community-creator-list { display: grid; gap: 4px; margin: 12px 0; }
+.app-shell .community-creator { padding: 10px; border-radius: 10px; }
+.app-shell .community-wallet-card { background: rgba(255, 184, 77, .06); }
+.app-shell .community-wallet-card * { background: transparent; }
+.app-shell .community-wallet-card .community-wallet-icon { background: rgba(255, 184, 77, .16); }
+.app-shell .community-discovery-link { display: inline-flex; align-items: center; gap: 6px; padding: 0; border: 0; background: none; color: var(--accent); font: 600 13.5px var(--font-sans); }
+.app-shell .community-discovery-empty { font-size: 13.5px; color: var(--muted); }
+.app-shell .community-empty-state { display: grid; place-items: center; gap: 6px; padding: 36px 16px; text-align: center; border: 1px dashed var(--line-strong); border-radius: var(--radius); }
+.app-shell .community-empty-state h3 { margin: 4px 0 0; font-size: 16px; color: var(--text); }
+.app-shell .community-empty-state p { margin: 0 0 8px; font-size: 14px; color: var(--muted); }
+.app-shell .community-empty-icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 12px; background: var(--accent-soft); color: var(--accent); }
+
+/* ---------- Polish: responsive -------------------------------------------- */
+@media (max-width: 1100px) {
+  .app-shell .studio-layout { grid-template-columns: minmax(0, 1fr); }
+  .app-shell .draft-panel { position: static; max-height: none; }
+  .app-shell .case-start { grid-template-columns: 1fr; }
+  .app-shell .case-outline { border-right: 0; border-bottom: 1px solid var(--line); }
+}
+@media (max-width: 760px) {
+  .app-shell .case-sections { grid-template-columns: 1fr; }
+  .app-shell .format-options { grid-template-columns: 1fr; }
+  .app-shell .draft-actions, .app-shell .case-footer { position: static; margin: 18px 0 0; padding: 14px 0 0; }
+  .app-shell .draft-action-buttons { margin-left: 0; width: 100%; }
+  .app-shell .draft-action-buttons .button { flex: 1; }
+  .app-shell .community-composer-footer { flex-wrap: wrap; }
+  .app-shell .generate-button { bottom: 76px; }
+}
+
+/* ---------- Final nits ---------------------------------------------------- */
+.app-shell .case-editor .case-title-input { font-size: 26px; font-weight: 700; line-height: 1.25; letter-spacing: -.03em; color: var(--text); }
+.app-shell .case-section:last-child:nth-child(odd):not(:has(textarea[rows='3'])) { grid-column: 1 / -1; }
+.app-shell .angle-option.chosen .radio-dot { border-color: var(--accent-strong); background: var(--accent-strong); box-shadow: inset 0 0 0 3px var(--surface-2); }
+.app-shell .community-creator { border: 0; padding: 10px 8px; }
+.app-shell .community-creator + .community-creator { border-top: 1px solid var(--line); border-radius: 0; }
+.app-shell .community-wallet-card { align-items: flex-start; height: auto; min-height: 0; overflow: visible; }
+.app-shell .community-wallet-card > span:not(.community-wallet-icon) { display: block; }
+.app-shell .community-wallet-card small { white-space: normal; }
+.app-shell .case-editor-top > div:first-child { flex: 1 1 280px; }
+@media (max-width: 760px) {
+  .app-shell .case-editor .case-title-input { font-size: 20px; }
+  .app-shell .case-editor { padding: 18px; }
+  .app-shell .draft-panel { padding: 18px; }
+}
+
+/* ==========================================================================
+   IA split: Community (others) / Social dashboard (you) / Wallet (money)
+   ========================================================================== */
+.app-shell .community-main-tabs { display: inline-flex; gap: 2px; padding: 3px; margin-bottom: 22px; border: 1px solid var(--line); border-radius: 11px; background: var(--surface); }
+.app-shell .community-main-tabs button { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 16px; border: 0; border-radius: 8px; background: transparent; color: var(--muted); font: 600 14px var(--font-sans); }
+.app-shell .community-main-tabs button:hover { color: var(--text); }
+.app-shell .community-main-tabs button.selected { background: var(--accent-soft); color: var(--accent); }
+.app-shell .community-secondary-button { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px; border: 1px solid var(--line-strong); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); font: 600 14px var(--font-sans); white-space: nowrap; }
+.app-shell .community-secondary-button:hover { background: var(--surface-2); }
+.app-shell .community-feed-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 24px; align-items: start; }
+.app-shell .community-feed-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
+.app-shell .community-rail-title { margin: 0 0 8px; font-size: 15px; color: var(--text); }
+.app-shell .community-discovery { padding: 18px; }
+.app-shell .community-post-actions .community-follow-button { margin-left: auto; }
+.app-shell .social-main-col { display: grid; gap: 22px; min-width: 0; }
+.app-shell .social-composer-title { margin: 0 0 12px; font-size: 16px; color: var(--text); }
+.app-shell .social-my-posts { display: grid; gap: 12px; }
+.app-shell .social-count { font: 500 12.5px var(--font-mono); color: var(--muted); padding: 2px 9px; border: 1px solid var(--line); border-radius: 999px; }
+.app-shell .social-following-list { list-style: none; margin: 0 0 12px; padding: 0; display: grid; }
+.app-shell .social-following-list li { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid var(--line); }
+.app-shell .social-following-list li:first-child { border-top: 0; }
+.app-shell .social-following-name { flex: 1; min-width: 0; display: grid; }
+.app-shell .social-following-name strong { font-size: 14px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.app-shell .social-following-name small { font: 400 12px var(--font-mono); color: var(--muted); }
+.app-shell .social-unfollow { border: 0; background: none; color: var(--muted); font-size: 12.5px; font-weight: 600; }
+.app-shell .social-unfollow:hover { color: var(--text); }
+.app-shell .social-composer-title + label + textarea, .app-shell .community-composer textarea { width: 100%; }
+.app-shell .community-delete-button { display: inline-flex; align-items: center; gap: 6px; }
+
+/* Wallet: one overview, then act (left) and review (right) */
+.app-shell .wallet-overview { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) auto; align-items: center; gap: 28px; padding: 24px 28px; margin-bottom: 20px; border: 1px solid var(--line); border-radius: var(--radius); background: linear-gradient(120deg, var(--accent-soft), transparent 70%), var(--surface); }
+.app-shell .wallet-overview-label { display: inline-flex; align-items: center; gap: 8px; font: 500 11.5px var(--font-mono); letter-spacing: .1em; color: var(--muted); }
+.app-shell .wallet-overview-balance, .app-shell .wallet-overview-stat { display: grid; gap: 6px; min-width: 0; }
+.app-shell .wallet-overview-stat { padding-left: 28px; border-left: 1px solid var(--line); }
+.app-shell .wallet-overview-stat > strong { font: 700 28px var(--font-mono); letter-spacing: -.03em; color: var(--text); }
+.app-shell .wallet-overview-stat small { font-size: 14px; color: var(--muted); }
+.app-shell .wallet-overview-help { margin: 0; font-size: 13.5px; color: var(--text-2); }
+.app-shell .wallet-overview .wallet-balance-value { font-size: 32px; }
+.app-shell .wallet-content-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.app-shell .wallet-panel { padding: 24px; }
+.app-shell .wallet-how { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); }
+.app-shell .wallet-how summary { cursor: pointer; font-size: 13.5px; font-weight: 600; color: var(--accent); }
+.app-shell .wallet-how[open] summary { margin-bottom: 12px; }
+.app-shell .wallet-risk-note { display: flex; gap: 8px; margin: 16px 0 0; }
+.app-shell .wallet-history .wallet-empty { padding: 32px 12px; text-align: center; }
+
+@media (max-width: 1100px) {
+  .app-shell .community-feed-layout, .app-shell .wallet-content-grid { grid-template-columns: minmax(0, 1fr); }
+  .app-shell .wallet-overview { grid-template-columns: 1fr; gap: 18px; }
+  .app-shell .wallet-overview-stat { padding: 18px 0 0; border-left: 0; border-top: 1px solid var(--line); }
+}
+@media (max-width: 760px) {
+  .app-shell .community-feed-heading { flex-wrap: wrap; justify-content: space-between; text-align: left; }
+  .app-shell .community-feed-heading h2 { margin: 0; text-align: left; }
+  .app-shell .community-composer-footer .community-ai-link { flex: 1 1 auto; justify-content: center; }
+}
