@@ -10,17 +10,97 @@ from config import settings
 from core import migrations
 from core.rag.chunking import chunk_documents
 from core.schemas import Chunk, SourceDocument
+import re
 
 
-@contextmanager
-def conn(db_path: str | None = None):
-    path = db_path or settings.db_path
+_migrated: set[str] = set()   # run migrations once per process per database
+
+
+def _prep(sql, params):
+    if params is None:
+        return sql, ()
+    if isinstance(params, dict):
+        # convert :name placeholders to positional ?, in order of appearance
+        names = re.findall(r":([A-Za-z_]\w*)", sql)
+        return re.sub(r":[A-Za-z_]\w*", "?", sql), tuple(params[n] for n in names)
+    if isinstance(params, (list, tuple)):
+        return sql, tuple(params)
+    return sql, tuple(params)   # sets, generators, etc.
+
+class _Row:
+    """sqlite3.Row-like: access by index or column name."""
+    __slots__ = ("_cols", "_vals")
+    def __init__(self, cols, vals):
+        self._cols, self._vals = cols, tuple(vals)
+    def __getitem__(self, k):
+        if isinstance(k, str):
+            return self._vals[self._cols.index(k)]
+        return self._vals[k]
+    def keys(self):
+        return list(self._cols)
+    def __iter__(self):
+        return iter(self._vals)
+    def __len__(self):
+        return len(self._vals)
+
+class _Cursor:
+    def __init__(self, cur):
+        self._cur = cur
+    def _cols(self):
+        return [d[0] for d in (self._cur.description or [])]
+    def _wrap(self, r):
+        return None if r is None else _Row(self._cols(), r)
+    def fetchone(self):
+        return self._wrap(self._cur.fetchone())
+    def fetchall(self):
+        cols = self._cols()
+        return [_Row(cols, r) for r in self._cur.fetchall()]
+    def __iter__(self):
+        return iter(self.fetchall())
+    @property
+    def lastrowid(self):
+        return self._cur.lastrowid
+    @property
+    def rowcount(self):
+        return self._cur.rowcount
+
+class _LibsqlConn:
+    def __init__(self, raw):
+        self._raw = raw
+    def execute(self, sql, params=()):
+        sql, params = _prep(sql, params)
+        return _Cursor(self._raw.execute(sql, params))
+    def executemany(self, sql, seq):
+        return _Cursor(self._raw.executemany(sql, seq))
+    def executescript(self, script):
+        return self._raw.executescript(script)
+    def commit(self):
+        self._raw.commit()
+    def rollback(self):
+        self._raw.rollback()
+    def close(self):
+        self._raw.close()
+
+def _open(path: str):
+    url = settings.db_url 
+    if url:
+        import libsql  # pip install libsql
+        c = libsql.connect(database=url, auth_token=settings.db_auth_token)
+        return _LibsqlConn(c), url
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     c = sqlite3.connect(path)
     c.row_factory = sqlite3.Row
     c.execute("PRAGMA foreign_keys=ON")
+    return c, path
+
+@contextmanager
+def conn(db_path: str | None = None):
+    path = db_path or settings.db_path
+    c, key = _open(path)
     try:
-        migrations.migrate(c)
+        if key not in _migrated:
+            migrations.migrate(c)
+            _migrated.add(key)
         yield c
         c.commit()
     except Exception:
@@ -28,7 +108,6 @@ def conn(db_path: str | None = None):
         raise
     finally:
         c.close()
-
 
 def _now() -> str:
     return datetime.now(timezone.utc).isoformat()

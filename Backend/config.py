@@ -26,6 +26,8 @@ class Settings:
     embed_model: str = os.getenv("EMBED_MODEL", "nomic-embed-text")
     github_token: str = os.getenv("GITHUB_TOKEN", "")
     db_path: str = os.getenv("DB_PATH", "data/socialpilot.db")
+    db_url: str = os.getenv("DB_URL")
+    db_auth_token: str = os.getenv("DB_AUTH_TOKEN")
     auth_session_ttl_hours: int = int(os.getenv("AUTH_SESSION_TTL_HOURS", "24"))
     email_verification_ttl_hours: int = int(
         os.getenv("EMAIL_VERIFICATION_TTL_HOURS", "24")
